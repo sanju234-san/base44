@@ -14,9 +14,12 @@ app = FastAPI(title="App Compiler API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:5173",
+        "https://base44-hazel.vercel.app",
+    ],
     allow_methods=["*"],
-    allow_headers=["*"]
+    allow_headers=["*"],
 )
 
 

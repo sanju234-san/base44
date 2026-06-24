@@ -213,8 +213,9 @@ base44/
 
 ## 📤 Submission
 
-- **Live URL**: *(hosted interface)*
-- **GitHub**: [github.com/sanju234-san/base44](https://github.com/sanju234-san/base44)
+- **Live URL**: https://base44-hazel.vercel.app
+- **Backend API**: https://base44-isuc.onrender.com/docs
+- **GitHub**: https://github.com/sanju234-san/base44
 - **Demo Video**: *(Loom — architecture walkthrough)*
 
 ---
