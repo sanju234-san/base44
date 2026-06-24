@@ -1,7 +1,8 @@
 import json
 import time
-from config import BIG_MODEL
 from utils.groq_retry import call_groq_with_retry
+
+MODEL = "llama-3.1-8b-instant"
 
 SYSTEM_PROMPT = """You are a schema refinement engine for a software compiler.
 
@@ -33,7 +34,7 @@ def run(schemas: dict) -> dict:
     start = time.time()
 
     response = call_groq_with_retry(
-        model=BIG_MODEL,
+        model=MODEL,
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": f"Refine and fix these schemas: {json.dumps(schemas)}"}
@@ -56,5 +57,6 @@ def run(schemas: dict) -> dict:
     return {
         "output": parsed,
         "latency_ms": round(latency, 2),
+        "model": MODEL,
         "success": True
     }

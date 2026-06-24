@@ -1,7 +1,8 @@
 import json
 import time
-from config import BIG_MODEL, SMALL_MODEL
 from utils.groq_retry import call_groq_with_retry
+
+MODEL = "llama-3.1-8b-instant"
 
 SYSTEM_PROMPT = """You are an intent extraction engine for a software compiler system.
 
@@ -34,11 +35,12 @@ def run(prompt: str) -> dict:
         return {
             "output": {"too_vague": True, "assumptions": [], "entities": [], "features": [], "roles": [], "auth_required": False, "payment_required": False, "app_type": "other"},
             "latency_ms": 0,
+            "model": MODEL,
             "success": True
         }
 
     response = call_groq_with_retry(
-        model=SMALL_MODEL,
+        model=MODEL,
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": f"Extract intent from this app description: {prompt}"}
@@ -49,7 +51,6 @@ def run(prompt: str) -> dict:
 
     raw = response.choices[0].message.content.strip()
 
-    # Strip markdown if model adds it anyway
     if raw.startswith("```"):
         raw = raw.split("```")[1]
         if raw.startswith("json"):
@@ -62,5 +63,6 @@ def run(prompt: str) -> dict:
     return {
         "output": parsed,
         "latency_ms": round(latency, 2),
+        "model": MODEL,
         "success": True
     }
