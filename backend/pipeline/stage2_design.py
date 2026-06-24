@@ -2,7 +2,7 @@ import json
 import time
 from utils.groq_retry import call_groq_with_retry
 
-STAGE2_MODEL = "llama3-8b-8192"
+STAGE2_MODEL = "llama-3.1-8b-instant"
 
 SYSTEM_PROMPT = """You are a system architect for a software compiler.
 
