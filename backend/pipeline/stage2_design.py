@@ -1,7 +1,8 @@
 import json
 import time
-from config import BIG_MODEL
 from utils.groq_retry import call_groq_with_retry
+
+STAGE2_MODEL = "llama3-8b-8192"
 
 SYSTEM_PROMPT = """You are a system architect for a software compiler.
 
@@ -42,7 +43,7 @@ def run(intent: dict) -> dict:
     start = time.time()
 
     response = call_groq_with_retry(
-        model=BIG_MODEL,
+        model=STAGE2_MODEL,
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": f"Generate app architecture for this intent: {json.dumps(intent)}"}
@@ -53,6 +54,7 @@ def run(intent: dict) -> dict:
 
     raw = response.choices[0].message.content.strip()
 
+    # Strip markdown code fences if present
     if raw.startswith("```"):
         raw = raw.split("```")[1]
         if raw.startswith("json"):
@@ -65,5 +67,6 @@ def run(intent: dict) -> dict:
     return {
         "output": parsed,
         "latency_ms": round(latency, 2),
+        "model": STAGE2_MODEL,
         "success": True
     }
