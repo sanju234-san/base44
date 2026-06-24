@@ -14,10 +14,7 @@ app = FastAPI(title="App Compiler API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "https://base44-hazel.vercel.app",
-    ],
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -183,7 +180,6 @@ async def generate(request: GenerateRequest):
     else:
         final_output = stage4_result["output"]
 
-    # Only mark partial_success if repairs actually failed
     unrecovered = [f for f in all_failure_types if "repair_failed" in f or "exception" in f]
     status = "success" if not unrecovered else "partial_success"
 
@@ -226,7 +222,6 @@ async def simulate(request: Request):
     ui_pages = schema.get("ui_schema", {}).get("pages", [])
     auth_roles = set(schema.get("auth_schema", {}).get("roles", []))
 
-    # Check 1: API endpoints resolve to DB tables
     for ep in api_endpoints:
         total += 1
         path_parts = ep.get("path", "").strip("/").split("/")
@@ -237,7 +232,6 @@ async def simulate(request: Request):
         else:
             issues.append(f"✗ {ep['method']} {ep['path']} → no matching DB table")
 
-    # Check 2: UI pages have routes
     for page in ui_pages:
         total += 1
         if page.get("route"):
@@ -246,7 +240,6 @@ async def simulate(request: Request):
         else:
             issues.append(f"✗ Page {page['name']} has no route")
 
-    # Check 3: Auth roles consistent
     permission_roles = set(schema.get("auth_schema", {}).get("permissions", {}).keys())
     for role in permission_roles:
         total += 1
@@ -256,7 +249,6 @@ async def simulate(request: Request):
         else:
             issues.append(f"✗ Role '{role}' in permissions but not in roles list")
 
-    # Check 4: DB tables have primary keys
     for table in schema.get("db_schema", {}).get("tables", []):
         total += 1
         has_pk = any(
